@@ -97,7 +97,7 @@ class Shell:
             self.print_help()
 
     
-        # open a file from another directory without changing current directory
+        # open a file and read it
         elif cmd == 'open':  
             if len(args) == 0:
                 print('open: Missing Arguments')
@@ -113,7 +113,21 @@ class Shell:
                     print(f'open: {filepath} is a directory')
                 except IOError as e:
                     print(f'open: IOError occurred - {e}')
-            
+
+        # append - open a file in another directory without changing the current directory
+        elif cmd == 'append':
+            if len(args) == 0:
+                print('append: Missing arguments')
+            else:
+                filepath = args[0]
+                try:
+                    with os.open(filepath, 'a') as file:
+                        print(f'Opened "{filepath}" in append mode')
+                except FileNotFoundError:
+                    print(f'append: file not found: {filepath}')
+                except IsADirectoryError:
+                    print(f'append: {filepath} is a directory')
+
 
         # run a file from your current directory
         elif cmd =='run':
@@ -147,7 +161,7 @@ class Shell:
         # checking if the given file is executable or not
         elif cmd == "executable":
             try:
-                self.check_file_executable(args[0])
+                self.check_executable(args[0])
             except FileNotFoundError:
                 print('cexe: file not found')
             except IsADirectoryError:
@@ -163,7 +177,7 @@ class Shell:
     
 
     # check_file is executable or not
-    def check_file_executable(self, filepath):
+    def check_executable(self, filepath):
         if os.path.isfile(filepath) and os.access(filepath, os.X_OK):
             print(f"the file '{filepath}' is executable")
         elif os.path.isfile(filepath):
@@ -208,8 +222,9 @@ class Shell:
         mkdir [directory] - creates a new directory
         rm [file] - Removes file
         rmdir [directory] removes an empty directory
-        cexe [file] - checks if the file is executable
-        open [file] - open a file from another directory without changing current
+        executable [file] - checks if the file is executable
+        open [file] - open a file and read it
+        append [file] - open a file in another directory without changing the current directory
         run [file] - runs a python file from the current directory
         help - displays the information(this one the one you are reading)
         quit/exit - exits the program
