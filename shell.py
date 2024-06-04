@@ -1,6 +1,6 @@
 # libraries
 import os
-
+import subprocess
 
 
 # class
@@ -96,10 +96,80 @@ class Shell:
         elif cmd == "help":
             self.print_help()
 
+    
+        # open a file from another directory without changing current directory
+        elif cmd == 'open':  
+            if len(args) == 0:
+                print('open: Missing Arguments')
+            else:
+                filepath = args[0]
+                try: 
+                    with open(filepath, 'r') as file:
+                        desc = file.read()
+                        print(desc)
+                except FileNotFoundError:
+                    print(f'open: file not found: {filepath}')
+                except IsADirectoryError:
+                    print(f'open: {filepath} is a directory')
+                except IOError as e:
+                    print(f'open: IOError occurred - {e}')
+            
+
+        # run a file from your current directory
+        elif cmd =='run':
+            
+            if len(args) == 0:
+                print('run: Missing Arguments')
+            else:
+                filepath = args[0]
+                try:
+                    if os.path.isfile(filepath) and os.access(filepath, os.X_OK):
+                        subprocess.run(['python', filepath])
+                except FileNotFoundError:
+                    print(f'run: file not found: {args[0]}')
+                except Exception as e:
+                    print(f'ERROR: error has occurred while running the file: {e}')               
+
+        
+        # run a file by giving its location 
+        elif cmd =='run-local':
+            if len(args) == 0:
+                print('run-local: Missing Arguments')
+            else:
+                try:
+                    subprocess.run(['python', args[0]])
+                except FileNotFoundError:
+                    print(f'run-local: file not found: {args[0]}')
+                except Exception as e:
+                    print(f"An error occurred while running the file: {e}")
+
+
+        # checking if the given file is executable or not
+        elif cmd == "executable":
+            try:
+                self.check_file_executable(args[0])
+            except FileNotFoundError:
+                print('cexe: file not found')
+            except IsADirectoryError:
+                print('cexe: is a directory')
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
 
         # in the case of command not found(unknown command)
         else:
             print(f'{cmd}: command not found')
+
+    
+
+    # check_file is executable or not
+    def check_file_executable(self, filepath):
+        if os.path.isfile(filepath) and os.access(filepath, os.X_OK):
+            print(f"the file '{filepath}' is executable")
+        elif os.path.isfile(filepath):
+            print(f" The file '{filepath}' is executable")
+        else:
+            print(f"the file '{filepath}' is not executable")
 
         
     # splits command string into list of components
@@ -127,6 +197,7 @@ class Shell:
         return components
     
 
+    # print help command
     def print_help(self):
         print("""
     Commands that are available:
@@ -137,6 +208,9 @@ class Shell:
         mkdir [directory] - creates a new directory
         rm [file] - Removes file
         rmdir [directory] removes an empty directory
+        cexe [file] - checks if the file is executable
+        open [file] - open a file from another directory without changing current
+        run [file] - runs a python file from the current directory
         help - displays the information(this one the one you are reading)
         quit/exit - exits the program
               """)
