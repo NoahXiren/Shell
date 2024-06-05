@@ -12,6 +12,11 @@ This is a basic shell made from python that supports common file system operatio
 - `mkdir [directory]`: Creates a new directory.
 - `rm [file]`: Removes the specified file.
 - `rmdir [directory]`: Removes the specified empty directory.
+- open`: open and read file
+- `append`: open a file in another directory without changing the current directory
+- `executable` : checks if given file is or file location is executable
+- `run`: run a file from your current directory
+- `run-local`: run a file by giving its location 
 - `check`: checks whether the file is in the current directory and whether it is executable or not.
 - `help`: Displays available commands and their usage.
 - `quit` or `exit`: Exits the shell.
