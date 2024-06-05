@@ -2,7 +2,6 @@
 import os
 import subprocess
 
-
 # class
 class Shell:
     def __init__(self):
@@ -163,27 +162,55 @@ class Shell:
             try:
                 self.check_executable(args[0])
             except FileNotFoundError:
-                print('cexe: file not found')
+                print('executable: file not found')
             except IsADirectoryError:
-                print('cexe: is a directory')
+                print('executable: is a directory')
             except Exception as e:
                 print(f"An error occurred: {e}")
 
 
+        # checking if file exists in current directory and is a executable
+        elif cmd == 'check':
+            dir_to_search = '.' 
+            try:
+                matched_files = self.check_file_executable(args[0], dir_to_search)
+                for file, is_executable in matched_files:
+                    print(f"{file} - Executable: {is_executable}")
+            except FileNotFoundError:
+                print('check: file not found')
+            except IsADirectoryError:
+                print('check: is a directory')
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
         # in the case of command not found(unknown command)
         else:
             print(f'{cmd}: command not found')
+        
 
     
-
-    # check_file is executable or not
+    # check if file is executable
     def check_executable(self, filepath):
-        if os.path.isfile(filepath) and os.access(filepath, os.X_OK):
-            print(f"the file '{filepath}' is executable")
-        elif os.path.isfile(filepath):
-            print(f" The file '{filepath}' is executable")
+        if os.access(filepath, os.X_OK):
+            print(f"The file '{filepath}' is executable")
         else:
-            print(f"the file '{filepath}' is not executable")
+            print(f"The file '{filepath}' is not executable")
+
+
+    # check_file if file(all with same name) exists and is executable or not
+    def check_file_executable(self, filepath, directory):
+        matching_files = []
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                # checks files start with given name from user followed by dot
+                if file.startswith(filepath + '.'):
+                    fullpath = os.path.join(root, file)
+                    if os.path.exists(fullpath):
+                        print(f"found files: \n {fullpath}")
+                        is_executable = os.access(fullpath, os.X_OK)
+                        matching_files.append((fullpath, is_executable))
+
+        return matching_files
 
         
     # splits command string into list of components
@@ -226,6 +253,7 @@ class Shell:
         open [file] - open a file and read it
         append [file] - open a file in another directory without changing the current directory
         run [file] - runs a python file from the current directory
+        check {file_name only} - checks directory and files exists or not and checks if they are executable
         help - displays the information(this one the one you are reading)
         quit/exit - exits the program
               """)
