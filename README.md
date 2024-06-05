@@ -12,7 +12,7 @@ This is a basic shell made from python that supports common file system operatio
 - `mkdir [directory]`: Creates a new directory.
 - `rm [file]`: Removes the specified file.
 - `rmdir [directory]`: Removes the specified empty directory.
-- open`: open and read file
+- `open`: open and read file
 - `append`: open a file in another directory without changing the current directory
 - `executable` : checks if given file is or file location is executable
 - `run`: run a file from your current directory
