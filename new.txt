@@ -1,1 +1,2 @@
 hello nice to meet you
+testing if the push and pull works for me( learning git)
